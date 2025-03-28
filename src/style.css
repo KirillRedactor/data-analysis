@@ -1,0 +1,149 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    /* padding: 0;
+    margin: 0; */
+}
+
+
+header {
+    top: 0;
+    margin: 20px;
+    background-color: white;
+}
+
+.settingsDiv {
+    margin: 20px;
+}
+
+
+#tableView {
+    overflow-x: scroll;
+    padding: 20px;
+}
+
+table {
+    text-align: right;
+    table-layout: fixed;
+    /* border-radius: 20px; */
+    /* box-shadow: 2px 2px 6px 2px grey; */
+}
+
+table thead th {
+    padding: 4px 10px;
+    /* position: sticky;
+    top: 0; */
+}
+
+table,
+tr,
+th,
+td {
+    border-collapse: collapse;
+    border: 1px solid black;
+}
+
+table tfoot {
+    background-color: rgb(220, 255, 255);
+}
+
+table tr td {
+    padding: 4px;
+}
+
+.paginatorDiv {
+    padding: 20px;
+    text-align: center;
+}
+
+.paginatorDiv button {
+    margin: 0 12px;
+}
+
+.paginatorDiv * {
+    font-size: 20px;
+}
+
+footer {
+    background-color: black;
+    color: white;
+    margin: 14% 12px;
+}
+
+/*
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    font-family: Arial, sans-serif;
+}
+
+thead {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+thead th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    color: #343a40;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+tbody td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    color: #495057;
+    transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+    background-color: #f1f3f5;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+@media screen and (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    
+    thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+    
+    tr {
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+    
+    td {
+        border: none;
+        position: relative;
+        padding-left: 50%;
+    }
+    
+    td:before {
+        position: absolute;
+        top: 12px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label);
+        color: #495057;
+        font-weight: bold;
+    }
+}
+*/

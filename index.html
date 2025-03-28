@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data analysis</title>
+  <link rel="stylesheet" href="src/style.css">
+</head>
+
+<body>
+  <header>
+    <h1>Cafe da coffee</h1>
+  </header>
+
+
+
+  <main>
+    <div class="settingsDiv">
+      <div class="sortDiv">
+        <h3>Sorting</h3>
+        <select name="sortBy" id="sortBySelect"></select>
+        <div>
+          <input type="radio" id="asc" name="sortRule" value="asc" checked>
+          <label for="asc">Asc</label>
+        </div>
+        <div>
+          <input type="radio" id="dec" name="sortRule" value="dec">
+          <label for="dec">Dec</label>
+        </div>
+      </div>
+
+      <!-- div -->
+    </div>
+
+    <div id="tableView"></div>
+
+    <div class="paginatorDiv">
+      <p>Страница: 1</p>
+      <br>
+      <button>Previous</button>
+      <select name="paginator" id="paginatorSelect">
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50" selected>50</option>
+        <option value="100">100</option>
+      </select>
+      <button>Next</button>
+    </div>
+  </main>
+
+  <!-- <footer></footer> -->
+</body>
+<script src="src/utils/sort.js"></script>
+<script src="src/utils/pagination.js"></script>
+
+<script src="src/render/settings.js"></script>
+
+<script src="src/generate.js"></script>
+<script src="src/index.js"></script>
+
+</html>
