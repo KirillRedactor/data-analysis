@@ -1,95 +1,86 @@
-const RECORDS_N = 10000;
-const records = Object.values(
-  generateOrders(RECORDS_N)
-    .filter((val) => val.baristaId && val.coffeeId)
-    .reduce((baristas, el) => {
-      if (!baristas[el.baristaId]) {
-        baristas[el.baristaId] = {
-          baristaId: el.baristaId,
-          ...Object.values(COFFEE_BY_ID)
-            .map((el) => [el, el + ' price'])
-            .flat()
-            .reduce((obj, val) => {
-              obj[val] = 0;
-              return obj;
-            }, {}),
-          summ: 0,
-        };
-      }
+const RECORDS_N = 5000;
+const records = generateOrders(RECORDS_N);
 
-      baristas[el.baristaId][COFFEE_BY_ID[el.coffeeId]] += el.cups;
-      baristas[el.baristaId][COFFEE_BY_ID[el.coffeeId] + ' price'] += +(el.cups * el.price);
-      baristas[el.baristaId].summ += +(el.cups * el.price);
-      return baristas;
-    }, {}),
-);
-const KEYS = ['index', ...new Set(records.flatMap((el) => Object.keys(el)))]; 
+let processedData = [];
+let tableColumns = [];
+let tableControls;
 
-const forPrint = (lst = []) =>
-  Array.from(lst, (el, i) => {
-    let newEl = Object.assign({}, el);
-    newEl.index = i;
-    [...Object.values(COFFEE_BY_ID)
-      .map((el) => [el, el + ' price']), 'summ']
-      .flat()
-      .forEach((val) => (newEl[val] = newEl[val].toFixed(+newEl[val] !== 0 ? 2 : 0)));
-    return newEl;
-  });
+document.addEventListener('DOMContentLoaded', function () {
+  const coffeeIds = Object.keys(COFFEE_BY_ID);
 
-// console.table(records);
-// console.log(COFFEE_BY_ID);
+  processedData = processOrderData(records);
+  window.processedData = processedData;
 
-function renderTable(headers, rows, footer) {
-  const rowsEl = document.createElement('table');
+  tableColumns = getTableColumns(coffeeIds);
 
-  const theadEl = document.createElement('thead');
-  headers.forEach((key) => {
-    const tdEl = document.createElement('th');
-    tdEl.innerText = key;
-    theadEl.appendChild(tdEl);
-  });
-  rowsEl.appendChild(theadEl);
+  tableControls = new TableControls();
+  tableControls.refreshTable = refreshTable;
 
-  rows.forEach((el) => {
-    const rowEl = document.createElement('tr');
-    headers.forEach((key) => {
-      const cellEl = document.createElement('td');
-      cellEl.innerText = el[key];
-      rowEl.appendChild(cellEl);
-    });
-    rowsEl.appendChild(rowEl);
-  });
+  renderCoffeeFilterOptions(coffeeIds);
+  renderColumnSelector(tableColumns, tableControls.visibleColumns);
+  renderMetricsSelector(tableControls.activeMetrics);
 
-  const tfootEl = document.createElement('tfoot');
-  if (footer) {
-    footer.forEach((eli) => {
-      const footerRowEl = document.createElement('tr');
-      eli.forEach((elj) => {
-        const cellEl = document.createElement('td');
-        cellEl.innerHTML = elj;
-        footerRowEl.appendChild(cellEl);
-      });
-      tfootEl.appendChild(footerRowEl);
-    });
+  refreshTable();
+});
 
-    rowsEl.appendChild(tfootEl);
-  }
+function refreshTable() {
+  const coffeeIds = Object.keys(COFFEE_BY_ID);
 
-  tableView.appendChild(rowsEl);
+  let filteredData = tableControls.getFilteredData();
+
+  filteredData = sortData(filteredData, tableControls.sortColumn, tableControls.sortDirection);
+
+  const footerData = calculateFooterMetrics(filteredData, coffeeIds, tableControls.activeMetrics);
+
+  renderTableHeader(tableColumns, tableControls.visibleColumns, tableControls.sortColumn, tableControls.sortDirection);
+
+  renderTableBody(
+    filteredData,
+    tableColumns,
+    tableControls.visibleColumns,
+    tableControls.currentPage,
+    tableControls.rowsPerPage,
+    tableControls.searchTerm,
+  );
+
+  renderTableFooter(footerData, tableColumns, tableControls.visibleColumns, tableControls.activeMetrics);
+
+  const totalPages = Math.max(1, Math.ceil(filteredData.length / tableControls.rowsPerPage));
+  updatePaginationInfo(tableControls.currentPage, totalPages);
+
+  renderMetricsSelector(tableControls.activeMetrics);
+
+  setupColumnReordering();
 }
 
-let mertics = {};
+function setupColumnReordering() {
+  const tableHeader = document.getElementById('tableHeader');
 
-// validStudents.forEach((s) => {
-//   s.avg = exams.reduce((sum, x) => sum + s[x], 0) / exams.length
-// })
+  Array.from(tableHeader.children).forEach((th) => {
+    th.setAttribute('draggable', 'true');
 
+    th.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', th.dataset.columnId);
+    });
 
-renderTable(
-  KEYS,
-  paginate(sortByKey(forPrint(records), 'coffeeId')).data,
-  [
-    ['Avg', 20, 30, 40],
-    ['Avg', 20, 30, 40],
-  ],
-);
+    th.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+
+    th.addEventListener('drop', (e) => {
+      e.preventDefault();
+      const sourceColumnId = e.dataTransfer.getData('text/plain');
+      const targetColumnId = th.dataset.columnId;
+
+      if (sourceColumnId && targetColumnId && sourceColumnId !== targetColumnId) {
+        const sourceIndex = tableColumns.findIndex((col) => col.id === sourceColumnId);
+        const targetIndex = tableColumns.findIndex((col) => col.id === targetColumnId);
+
+        const [movedColumn] = tableColumns.splice(sourceIndex, 1);
+        tableColumns.splice(targetIndex, 0, movedColumn);
+
+        refreshTable();
+      }
+    });
+  });
+}
