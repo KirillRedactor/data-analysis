@@ -47,6 +47,9 @@ function toggleVisibility(elementId) {
 }
 
 function containsSearchTerm(text, searchTerm) {
-  if (!text || !searchTerm) return true;
-  return String(text).toLowerCase().includes(searchTerm.toLowerCase());
+  if (!searchTerm) return true;
+  searchTerm = searchTerm.replace(' ', '').split(',');
+  return searchTerm.some((term) => {
+    return String(text).toLowerCase().includes(term.toLowerCase());
+  });
 }
